@@ -8,7 +8,9 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,40 +48,45 @@ public class TicketSearch {
         String jsonStr = response.body().string();
         JSONObject jsonObj = JSON.parseObject(jsonStr);
         JSONArray jsonArr = (JSONArray) ((JSONObject) jsonObj.get("data")).get("result");
+
+        List<Ticket> ticketList = new ArrayList<>();//放Ticket的容器
+
         for (Object item : jsonArr.toArray()) {
             String record = item.toString();
             String[] recordArr = record.split("\\|");
 
-
-
-            System.out.println("--------------------------------------------------------");
-            System.out.print("车次: " + recordArr[3]);
-            String startStation = codeNameMap.get(recordArr[6]);
-            System.out.print("\t出发地: " + startStation);
-            String endStation = codeNameMap.get(recordArr[7]);
-            System.out.print("\t目的地: " + endStation);
-            System.out.print("\t出发时间: " + recordArr[8]);
-            System.out.print("\t到达时间: " + recordArr[9]);
-            System.out.print("\t历时: " + recordArr[10]);
-            System.out.print("\t高级软卧: " + recordArr[21]);
-            System.out.print("\t软卧: " + recordArr[23]);
-            System.out.print("\t无座: " + recordArr[26]);
-            System.out.print("\t硬卧: " + recordArr[28]);
-            System.out.print("\t硬座: " + recordArr[29]);
-            System.out.print("\t二等座: " + recordArr[30]);
-            System.out.print("\t一等座: " + recordArr[31]);
-            System.out.print("\t商务，特等座: " + recordArr[32]);
-            System.out.println("--------------------------------------------------------");
-
             Ticket ticket = new Ticket();
             ticket.setTrainNumber(recordArr[3]);
-            ticket.setFronStation(endStation);
-            ticket.setToStation(endStation);
-//            ticket.setArrvialTime();
-//            ticket.setDepartureTime();
-//            ticket.setDuration();
+            ticket.setStartStation(recordArr[6]);
+            ticket.setEndStation(recordArr[7]);
+            ticket.setDepartureTime(recordArr[8]);
+            ticket.setArrvialTime(recordArr[9]);
+            ticket.setDuration(recordArr[10]);
+            ticketList.add(ticket);
+
+//            System.out.println("--------------------------------------------------------");
+//            System.out.print("车次: " + recordArr[3]);
+//            String startStation = codeNameMap.get(recordArr[6]);
+//            System.out.print("\t出发地: " + startStation);
+//            String endStation = codeNameMap.get(recordArr[7]);
+//            System.out.print("\t目的地: " + endStation);
+//            System.out.print("\t出发时间: " + recordArr[8]);
+//            System.out.print("\t到达时间: " + recordArr[9]);
+//            System.out.print("\t历时: " + recordArr[10]);
+//            System.out.print("\t高级软卧: " + recordArr[21]);
+//            System.out.print("\t软卧: " + recordArr[23]);
+//            System.out.print("\t无座: " + recordArr[26]);
+//            System.out.print("\t硬卧: " + recordArr[28]);
+//            System.out.print("\t硬座: " + recordArr[29]);
+//            System.out.print("\t二等座: " + recordArr[30]);
+//            System.out.print("\t一等座: " + recordArr[31]);
+//            System.out.print("\t商务，特等座: " + recordArr[32]);
+//            System.out.println("--------------------------------------------------------");
+
+
+
 
         }
-        return "";
+        return JSONObject.toJSONString(ticketList);
     }
 }
